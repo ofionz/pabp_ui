@@ -1,32 +1,79 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app>
+    <v-card hover color="primary" class="text-center">
+      <h2 style="color: white">Платформа автоматизации бизнес-процессов</h2>
+      <v-tabs dark background-color="primary" show-arrows centered>
+        <v-tab to="/init"> Инициатор </v-tab>
+        <v-tab to="/watch"> Наблюдатель </v-tab>
+        <v-tab to="/approval"> Утверждающий </v-tab>
+      </v-tabs>
+    </v-card>
+    <v-main v-if="isInit">
+      <router-view />
+    </v-main>
+
+    <v-bottom-sheet v-model="isShowPopup">
+      <v-sheet class="text-center" height="200px">
+        <div class="py-3">{{ this.popupSettings.message }}</div>
+        <v-btn
+          class="mt-4 mr-6"
+          outlined
+          color="secondary"
+          v-if="popupSettings.cancel"
+          @click="isShowPopup = false"
+        >
+          Отмена
+        </v-btn>
+        <v-btn
+          class="mt-4 mr-6"
+          color="primary"
+          v-if="popupSettings.confirm"
+          @click="
+            () => {
+              this.popupSettings.confirm.handler();
+              this.isShowPopup = false;
+            }
+          "
+        >
+          {{ popupSettings.confirm.text }}
+        </v-btn>
+        <v-btn
+          class="mt-4"
+          color="error"
+          v-if="popupSettings.reject"
+          @click="
+            () => {
+              this.popupSettings.reject.handler();
+              this.isShowPopup = false;
+            }
+          "
+        >
+          {{ popupSettings.reject.text }}
+        </v-btn>
+      </v-sheet>
+    </v-bottom-sheet>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+export default {
+  name: "App",
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+  async beforeCreate() {
+    this.isInit = await this.$store.dispatch("processes/fetchProcessesList");
+    this.$eventBus.$on("popup", this.showPopup);
+  },
+  methods: {
+    // eslint-disable-next-line no-unused-vars
+    showPopup(settings) {
+      this.popupSettings = settings;
+      this.isShowPopup = true;
+    },
+  },
+  data: () => ({
+    popupSettings: {},
+    isShowPopup: false,
+    isInit: false,
+  }),
+};
+</script>
