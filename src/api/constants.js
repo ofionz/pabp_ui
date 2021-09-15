@@ -8,4 +8,6 @@ export const GET_TYPE_PROCESSES_ENDPOINT = `https://crm.azottech.starlabs.su/aja
 export const GET_TYPE_DATA_ENDPOINT = `https://crm.azottech.starlabs.su/ajax/?controller=bizapp&action=paramsprocess`;
 // export const GET_DETAILS_ENDPOINT = `https://6d42cf93-6b43-4d2a-b56c-57d0274bc870.mock.pstmn.io/ajax/?controller=bizapp&action=deatilsprocess`;
 export const GET_DETAILS_ENDPOINT = `https://crm.azottech.starlabs.su/ajax/?controller=bizappcontext&action=get`;
+export const SEND_FORM_ENDPOINT = `https://crm.azottech.starlabs.su/ajax/?controller=bizapp&action=startprocess&processtype=bonuspayments`;
+
 

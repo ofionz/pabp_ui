@@ -8,7 +8,7 @@ import moment from "moment";
 import { VueMaskDirective } from "v-mask";
 Vue.prototype.$eventBus = new Vue();
 
-window.BITRIX_USER_ID = 1;
+window.BITRIX_USER_ID = 444;
 
 axios.interceptors.request.use(createSetAuthInterceptor());
 

@@ -1,20 +1,10 @@
 <template>
-  <div class="d-flex align-center">
-    <v-subheader style="width: 25%"> Тип:</v-subheader>
-    <v-select
-      v-model="type"
-      :items="types"
-      item-value="type"
-      :disabled="disabled"
-      @change="changeTypeHandler"
-      label="Тип процесса"
-    ></v-select>
-  </div>
+
 </template>
 
 <script>
 export default {
-  name: "Watcher",
+  name: "Type",
 
   props: {
     initValue: Array,
@@ -28,11 +18,7 @@ export default {
   },
 
   async created() {
-    if (!this.disabled && !this.initValue) {
-      this.types = await this.$store.dispatch(
-        "processes/fetchTypesOfProcesses"
-      );
-    }
+
 
     if (this.initValue) {
       this.types = this.initValue;

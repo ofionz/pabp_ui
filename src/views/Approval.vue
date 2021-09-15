@@ -47,7 +47,7 @@ export default {
   },
   async created() {
     this.data = await this.$store.state.processes.list.filter(
-        (elem) => elem.role === "approval"
+      (elem) => elem.role === "approving"
     );
   },
   computed: {
@@ -73,7 +73,7 @@ export default {
     clickRowHandler(row) {
       this.$router.push({
         name: "details",
-        params: { id: row.id, context: "approval" },
+        params: { id: row.id, context: "approving" },
       });
     },
     customSort(items, index, isDesc) {

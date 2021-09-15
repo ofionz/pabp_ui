@@ -72,6 +72,7 @@ export default {
     if (this.params.disabled) {
       this.disabled = true;
     }
+    this.params.responsible = this.selected.user_id;
   },
   data() {
     return {
@@ -114,9 +115,12 @@ export default {
     },
 
     onChange() {
-      // let data = this.$store.state.processes.newProcessData;
-      // data.accountant = this.selected;
-      // this.$store.commit("processes/setNewProcessData", data);
+      this.params.responsible = this.selected.user_id;
+      let data = this.$store.state.processes.newProcessData;
+      // eslint-disable-next-line no-unused-vars
+      let activity = data.activities.find((activ) => activ.type === 'generatingdocuments');
+      activity = this.params;
+      this.$store.commit("processes/setNewProcessData", data);
     },
   },
 };

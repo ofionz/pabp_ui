@@ -25,8 +25,8 @@ const routes = [
     component: () => import("../views/newProcess.vue"),
   },
   {
-    path: "/approval",
-    name: "approval",
+    path: "/approving",
+    name: "approving",
     component: () => import("../views/Approval.vue"),
   },
   {

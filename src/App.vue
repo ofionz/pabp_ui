@@ -5,7 +5,7 @@
       <v-tabs dark background-color="primary" show-arrows centered>
         <v-tab to="/init"> Инициатор </v-tab>
         <v-tab to="/watch"> Наблюдатель </v-tab>
-        <v-tab to="/approval"> Утверждающий </v-tab>
+        <v-tab to="/approving"> Утверждающий </v-tab>
       </v-tabs>
     </v-card>
     <v-main v-if="isInit">
@@ -16,16 +16,16 @@
       <v-sheet class="text-center" height="200px">
         <div class="py-3">{{ this.popupSettings.message }}</div>
         <v-btn
-          class="mt-4 mr-6"
+          class="mt-4 mx-3"
           outlined
           color="secondary"
           v-if="popupSettings.cancel"
           @click="isShowPopup = false"
         >
-          Отмена
+          {{ this.popupSettings.cancel.text }}
         </v-btn>
         <v-btn
-          class="mt-4 mr-6"
+          class="mt-4 mx-3"
           color="primary"
           v-if="popupSettings.confirm"
           @click="
@@ -38,7 +38,7 @@
           {{ popupSettings.confirm.text }}
         </v-btn>
         <v-btn
-          class="mt-4"
+          class="mt-4 mx-3"
           color="error"
           v-if="popupSettings.reject"
           @click="

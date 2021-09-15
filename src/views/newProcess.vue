@@ -17,26 +17,29 @@
     </div>
 
     <div style="width: 50%" class="d-flex flex-column">
-      <type @changed="onTypeChanged"></type>
-
-
+      <div class="d-flex align-center">
+        <v-subheader style="width: 25%"> Тип:</v-subheader>
+        <v-select
+          v-model="type"
+          :items="types"
+          item-value="type"
+          item-text="name"
+          @change="onTypeChanged"
+          label="Тип процесса"
+        ></v-select>
+      </div>
 
       <div v-if="typeData.initiator" class="d-flex align-center">
         <v-subheader style="width: 25%"> Инициатор:</v-subheader>
         <span> {{ typeData.initiator.user_name }}</span>
-        </div>
-<!--      <initiator-->
-<!--        @changed="onInitiatorChanged"-->
-<!--        v-if="typeData.initiator"-->
-<!--        :params="typeData.initiator"-->
-<!--      ></initiator>-->
+      </div>
+      <!--      <initiator-->
+      <!--        @changed="onInitiatorChanged"-->
+      <!--        v-if="typeData.initiator"-->
+      <!--        :params="typeData.initiator"-->
+      <!--      ></initiator>-->
 
-
-      <watcher
-        v-if="typeData.watcher"
-        :items="typeData.watcher"
-      >
-      </watcher>
+      <watcher v-if="typeData.watcher" :items="typeData.watcher"> </watcher>
       <k-p-i
         class="mt-3"
         v-if="findByParamTypeName('familiarization')"
@@ -68,7 +71,6 @@ import KPI from "../components/KPI";
 import Bookkeeper from "../components/Bookkeeper";
 import Watcher from "../components/Watcher";
 // import Initiator from "../components/Initiator";
-import Type from "../components/Type";
 export default {
   name: "NewProcess",
   components: {
@@ -76,16 +78,16 @@ export default {
     Bookkeeper,
     Watcher,
     // Initiator,
-    Type,
   },
 
   async created() {
     this.$store.commit("processes/setNewProcessData", {});
+    this.types = await this.$store.dispatch("processes/fetchTypesOfProcesses");
   },
   data() {
     return {
+      types: [],
       type: "",
-      count: 0,
       typeData: [],
     };
   },
@@ -97,25 +99,35 @@ export default {
       }
       return data;
     },
-    startHandler() {
-      // this.$router.push({ name: 'new' })
-      console.log(this.$store.state.processes.newProcessData);
+    async startHandler() {
+      if (await this.$store.dispatch("processes/sendFormData")) {
+        this.$eventBus.$emit("popup", {
+          message: "Процесс запущен",
+          cancel: {
+            text: "ОК",
+          },
+        });
+        await this.$store.dispatch("processes/fetchProcessesList");
+
+        await this.$router.push({ name: "init" });
+      }
     },
 
     async onTypeChanged(typeCode) {
       this.type = typeCode;
-      this.$store.commit("processes/setNewProcessData", {});
       this.typeData = await this.$store.dispatch("processes/fetchFormData", {
         processtype: this.type,
       });
+      this.$store.commit("processes/setNewProcessData", this.typeData);
     },
-    async onInitiatorChanged(initiator) {
-      this.$store.commit("processes/setNewProcessData", {});
-      this.typeData = await this.$store.dispatch("processes/fetchFormData", {
-        processtype: this.type,
-        initiator: initiator,
-      });
-    },
+
+    // async onInitiatorChanged(initiator) {
+    //   this.$store.commit("processes/setNewProcessData", {});
+    //   this.typeData = await this.$store.dispatch("processes/fetchFormData", {
+    //     processtype: this.type,
+    //     initiator: initiator,
+    //   });
+    // },
   },
 };
 </script>

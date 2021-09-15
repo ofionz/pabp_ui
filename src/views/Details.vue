@@ -21,7 +21,7 @@
           <v-slide-item :key="index" v-for="(stage, index) in data.stages">
             <v-stepper-step
               :complete="
-                stage.elements.filter((el) => el.status === 'final').length ===
+                stage.elements.filter((el) => el.status === 'APPROVED').length ===
                 stage.elements.length
               "
               :step="index + 1"
@@ -30,7 +30,7 @@
                 v-if="stage.elements.length > 1"
                 :value="
                   (100 / stage.elements.length) *
-                  stage.elements.filter((el) => el.status === 'final').length
+                  stage.elements.filter((el) => el.status === 'APPROVED').length
                 "
               >
               </v-progress-linear>
@@ -88,16 +88,10 @@
                 Назад
               </v-btn>
             </span>
-            <span v-if="data.role === 'initiator'">
-              <v-btn color="error" @click="cancelProcess">
-                Отменить согласование
+            <span v-for="(button, index) in data.buttons" :key="index">
+              <v-btn :color="button.style" @click="sendRequest(button.url)">
+                {{ button.name }}
               </v-btn>
-            </span>
-            <span v-if="data.role === 'approval'">
-              <v-btn color="error" @click="sheet = !sheet"> Отклонить </v-btn>
-            </span>
-            <span v-if="data.role === 'approval'">
-              <v-btn color="success" @click="true"> Утвердить </v-btn>
             </span>
           </div>
         </v-card>
@@ -110,12 +104,18 @@
               <v-divider :key="index" :inset="true"></v-divider>
               <v-list-item :key="'item' + index">
                 <v-list-item-avatar>
-                  <v-img :src="item.user_photo ? item.user_photo : 'https://w7.pngwing.com/pngs/618/581/png-transparent-computer-icons-exclamation-mark-miscellaneous-app-store-smile.png'"></v-img>
+                  <v-img
+                    :src="
+                      item.user_photo
+                        ? item.user_photo
+                        : 'https://w7.pngwing.com/pngs/618/581/png-transparent-computer-icons-exclamation-mark-miscellaneous-app-store-smile.png'
+                    "
+                  ></v-img>
                 </v-list-item-avatar>
 
                 <v-list-item-content>
                   <v-list-item-title
-                    >{{ item.user_name ?  item.user_name : 'Системное' }}
+                    >{{ item.user_name ? item.user_name : "Системное" }}
                     <span :class="$style.comment_date">{{
                       item.DATE
                     }}</span></v-list-item-title
@@ -138,7 +138,6 @@ import Bookkeeper from "../components/Bookkeeper";
 export default {
   name: "Main",
   components: {
-
     KPI,
     Bookkeeper,
   },
@@ -175,18 +174,36 @@ export default {
       }
       return data;
     },
-    cancelProcess() {
+    async sendRequest(url) {
       let modalParams = {
-        message: "Вы дествительно хотите отменить процесс ?",
-        cancel: true,
-        reject: {
+        message: "Вы уверены?",
+        cancel: {
+          text: "Отмена",
+        },
+        confirm: {
           text: "Да",
-          handler: () => this.$router.go(-1),
+          handler: async () => {
+            if (await this.$store.dispatch("processes/freeRequest", url)) {
+              await this.$store.dispatch("processes/fetchProcessesList");
+              await this.$router.push({ name: "approving" });
+            }
+          },
         },
       };
-
       this.$eventBus.$emit("popup", modalParams);
     },
+    // cancelProcess() {
+    //   let modalParams = {
+    //     message: "Вы дествительно хотите отменить процесс ?",
+    //     cancel: true,
+    //     reject: {
+    //       text: "Да",
+    //       handler: () => this.$router.go(-1),
+    //     },
+    //   };
+    //
+    //   this.$eventBus.$emit("popup", modalParams);
+    // },
   },
 };
 </script>
