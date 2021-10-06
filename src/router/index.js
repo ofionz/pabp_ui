@@ -12,28 +12,28 @@ const routes = [
   {
     path: "/init",
     name: "init",
-    component: () => import("../views/Init.vue"),
+    component: () => import(/* webpackChunkName: "Init" */ "../views/Init.vue"),
   },
   {
     path: "/watch",
     name: "watch",
-    component: () => import("../views/Watch.vue"),
+    component: () => import(/* webpackChunkName: "Watch" */  "../views/Watch.vue"),
   },
   {
     path: "/new",
     name: "new",
-    component: () => import("../views/newProcess.vue"),
+    component: () => import(/* webpackChunkName: "newProcess" */  "../views/newProcess.vue"),
   },
   {
     path: "/approving",
     name: "approving",
-    component: () => import("../views/Approval.vue"),
+    component: () => import(/* webpackChunkName: "Approval" */  "../views/Approval.vue"),
   },
   {
     path: "/details/:id",
     props: true,
     name: "details",
-    component: () => import("../views/Details.vue"),
+    component: () => import(/* webpackChunkName: "Details" */  "../views/Details.vue"),
   },
 ];
 

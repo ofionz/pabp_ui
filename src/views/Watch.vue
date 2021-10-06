@@ -17,6 +17,7 @@
         :headers="headers"
         :items="data"
         :search="search"
+        :item-class="itemRowBackground"
         :disable-pagination="true"
         :hide-default-footer="true"
         :custom-sort="customSort"
@@ -68,6 +69,9 @@ export default {
     },
   },
   methods: {
+    itemRowBackground(item) {
+      return item.status === "complete" ? "completeRow" : "";
+    },
     clickRowHandler(row) {
       this.$router.push({
         name: "details",
@@ -109,3 +113,8 @@ export default {
   },
 };
 </script>
+<style>
+.completeRow {
+  opacity: 0.4;
+}
+</style>

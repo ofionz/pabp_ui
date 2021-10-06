@@ -3,8 +3,8 @@
     <v-subheader style="width: 25%"> Наблюдатели:</v-subheader>
     <v-select
       @change="onChange"
+      :items="allItems"
       v-model="selected"
-      :items="items"
       item-value="user_id"
       item-text="user_name"
       :menu-props="{ maxHeight: '400' }"
@@ -22,26 +22,27 @@ export default {
     items: Array,
   },
   created() {
-    // this.items = this.params.prepare_data;
-    // this.items.forEach((el) => (el.selected = true));
-    // this.params.data.forEach((el) => {
-    //   if (!this.items.find((inner) => inner.id === el.id)) {
-    //     this.items.push(el);
-    //   }
-    // });
-    this.selected = this.items.filter((elem) => elem.selected === true);
+
+    this.allItems = JSON.parse(JSON.stringify(this.items));
+    this.selected = this.allItems
+      .filter((elem) => elem.selected === true)
+      .map((el) => el.user_id);
+    let data = this.$store.state.processes.newProcessData;
+    data.watcher = this.selected;
+    this.$store.commit("processes/setNewProcessData", data);
   },
   data() {
     return {
+      allItems: [],
       disabled: false,
       selected: [],
     };
   },
   methods: {
     onChange() {
-      // let data = this.$store.state.processes.newProcessData;
-      // data.watchers = this.selected;
-      // this.$store.commit("processes/setNewProcessData", data);
+      let data = this.$store.state.processes.newProcessData;
+      data.watcher = this.selected;
+      this.$store.commit("processes/setNewProcessData", data);
     },
   },
 };

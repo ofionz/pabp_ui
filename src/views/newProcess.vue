@@ -40,7 +40,14 @@
       <!--      ></initiator>-->
 
       <watcher v-if="typeData.watcher" :items="typeData.watcher"> </watcher>
+
       <k-p-i
+        @blockSubmit="
+          (elem) => {
+            submitBlocked = elem.state;
+            error = elem.message;
+          }
+        "
         class="mt-3"
         v-if="findByParamTypeName('familiarization')"
         :params="findByParamTypeName('familiarization')"
@@ -61,7 +68,13 @@
         >
           Назад
         </v-btn>
-        <v-btn color="primary" @click="startHandler"> Запустить </v-btn>
+        <v-btn
+          color="primary"
+          @click="startHandler"
+          :disabled="!typeData || !type"
+        >
+          Запустить
+        </v-btn>
       </div>
     </div>
   </v-container>
@@ -70,14 +83,12 @@
 import KPI from "../components/KPI";
 import Bookkeeper from "../components/Bookkeeper";
 import Watcher from "../components/Watcher";
-// import Initiator from "../components/Initiator";
 export default {
   name: "NewProcess",
   components: {
     KPI,
     Bookkeeper,
     Watcher,
-    // Initiator,
   },
 
   async created() {
@@ -86,9 +97,11 @@ export default {
   },
   data() {
     return {
+      submitBlocked: false,
+      error: "",
       types: [],
       type: "",
-      typeData: [],
+      typeData: {},
     };
   },
   methods: {
@@ -100,16 +113,25 @@ export default {
       return data;
     },
     async startHandler() {
-      if (await this.$store.dispatch("processes/sendFormData")) {
+      if (this.submitBlocked) {
         this.$eventBus.$emit("popup", {
-          message: "Процесс запущен",
+          message: "Ошибка валидации",
+          body: this.error,
           cancel: {
-            text: "ОК",
+            text: "OK",
           },
         });
-        await this.$store.dispatch("processes/fetchProcessesList");
-
-        await this.$router.push({ name: "init" });
+      } else {
+        if (await this.$store.dispatch("processes/sendFormData")) {
+          this.$eventBus.$emit("popup", {
+            message: "Процесс запущен",
+            cancel: {
+              text: "ОК",
+            },
+          });
+          await this.$store.dispatch("processes/fetchProcessesList");
+          await this.$router.push({ name: "init" });
+        }
       }
     },
 

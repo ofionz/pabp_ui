@@ -4,7 +4,7 @@ import {
   GET_TYPE_PROCESSES_ENDPOINT,
   GET_TYPE_DATA_ENDPOINT,
   GET_DETAILS_ENDPOINT,
-    SEND_FORM_ENDPOINT,
+  SEND_FORM_ENDPOINT,
 } from "../../api/constants";
 import Vue from "vue";
 
@@ -55,11 +55,11 @@ export async function fetchFormData(context, payload) {
 }
 
 export async function sendFormData(context) {
-    let payload =  JSON.parse(JSON.stringify(context.state.newProcessData));
-    payload.initiator =context.state.newProcessData.initiator.user_id;
+  let payload = JSON.parse(JSON.stringify(context.state.newProcessData));
+  payload.initiator = context.state.newProcessData.initiator.user_id;
 
   return Vue.prototype.$axios
-    .post(SEND_FORM_ENDPOINT, payload )
+    .post(SEND_FORM_ENDPOINT, payload)
     .then((response) => {
       if (response.data) {
         return response.data;
@@ -87,9 +87,9 @@ export async function fetchDetailsData(context, id) {
     });
 }
 
-export async function freeRequest(context, url) {
+export async function freeRequest(context, params) {
   return Vue.prototype.$axios
-    .get(url)
+    .post(params.url, {comment: params.comment})
     .then((response) => {
       if (response.data) {
         return response.data;
@@ -101,4 +101,20 @@ export async function freeRequest(context, url) {
       throw new Error("action freeRequest " + error);
     });
 }
+export async function submitForm(context, url) {
+    let payload = JSON.parse(JSON.stringify(context.state.newProcessData));
+    payload.initiator = context.state.newProcessData.initiator.user_id;
 
+  return Vue.prototype.$axios
+    .post(url, payload)
+    .then((response) => {
+      if (response.data) {
+        return response.data;
+      } else {
+        return false;
+      }
+    })
+    .catch((error) => {
+      throw new Error("action submitForm " + error);
+    });
+}
