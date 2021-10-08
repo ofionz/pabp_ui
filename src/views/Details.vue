@@ -98,7 +98,7 @@
     <div class="d-flex justify-space-between">
       <div :class="$style.column">
         <v-card class="d-flex flex-column pa-3">
-          <v-card-title> Параметры </v-card-title>
+          <v-card-title> Параметры</v-card-title>
 
           <div v-if="data.initiator" class="d-flex align-center">
             <v-subheader style="width: 25%"> Инициатор:</v-subheader>
@@ -130,6 +130,16 @@
           </bookkeeper>
 
           <v-divider></v-divider>
+
+          <v-text-field
+            class="mt-9"
+            persistent-hint
+            hint="Вы можете оставить комментарий перед тем как сменить стадию"
+            outlined
+            v-model="comment"
+            label="Комментарий"
+          ></v-text-field>
+
           <div class="d-flex justify-space-around my-3 flex-wrap">
             <span class="mx-2 my-3">
               <v-btn color="secondary" outlined @click="$router.go(-1)">
@@ -157,7 +167,7 @@
       </div>
       <div :class="$style.column">
         <v-card class="pa-3">
-          <v-card-title> История </v-card-title>
+          <v-card-title> История</v-card-title>
           <v-list three-line>
             <template v-for="(item, index) in data.comments">
               <v-divider :key="index" :inset="true"></v-divider>
@@ -180,20 +190,20 @@
                       v-if="item.status === 'APPROVED'"
                       class="ml-1"
                       color="success"
-                      >mdi-check</v-icon
-                    >
+                      >mdi-check
+                    </v-icon>
                     <v-icon
                       v-if="item.status === 'REJECTED'"
                       class="ml-1"
                       color="error"
-                      >mdi-close</v-icon
-                    >
+                      >mdi-close
+                    </v-icon>
                     <v-icon
                       v-if="item.status === 'UPDATE'"
                       class="ml-1"
                       color="primary"
-                      >mdi-update</v-icon
-                    >
+                      >mdi-update
+                    </v-icon>
                   </v-list-item-title>
 
                   <v-list-item-subtitle
@@ -211,6 +221,7 @@
 <script>
 import KPI from "../components/KPI";
 import Bookkeeper from "../components/Bookkeeper";
+
 export default {
   name: "Main",
   components: {
@@ -225,6 +236,7 @@ export default {
 
   data: () => ({
     dialog: false,
+    comment: "",
     submitBlocked: false,
     error: "",
     data: {
@@ -298,28 +310,15 @@ export default {
       this.$eventBus.$emit("popup", modalParams);
     },
     async sendRequest(url) {
-      let modalParams = {
-        message: "Вы уверены?",
-        cancel: {
-          text: "Отмена",
-        },
-        comment: true,
-        confirm: {
-          text: "Да",
-          handler: async (comment) => {
-            if (
-              await this.$store.dispatch("processes/freeRequest", {
-                url: url,
-                comment: comment,
-              })
-            ) {
-              await this.$store.dispatch("processes/fetchProcessesList");
-              await this.$router.push({ name: "approving" });
-            }
-          },
-        },
-      };
-      this.$eventBus.$emit("popup", modalParams);
+      if (
+        await this.$store.dispatch("processes/freeRequest", {
+          url: url,
+          comment: this.comment,
+        })
+      ) {
+        await this.$store.dispatch("processes/fetchProcessesList");
+        await this.$router.push({ name: "approving" });
+      }
     },
     // cancelProcess() {
     //   let modalParams = {
@@ -342,11 +341,13 @@ export default {
   width: 50%;
   margin: 20px;
 }
+
 .backward_btn {
   position: absolute;
   top: 7px;
   left: 20px;
 }
+
 .comment_date {
   color: grey;
   font-size: 12px;

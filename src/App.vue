@@ -6,7 +6,7 @@
         color="primary"
     ></v-progress-circular></v-overlay>
     <v-card hover color="primary" class="text-center">
-      <h2 style="color: white">Платформа автоматизации бизнес-процессов</h2>
+      <h2 style="color: white">Платформа автоматизации бизнес-процессов.</h2>
       <v-tabs dark background-color="primary" show-arrows centered>
         <v-tab to="/init">
           <v-badge
@@ -53,15 +53,7 @@
           <b>{{ this.popupSettings.message }}</b>
         </div>
         <div v-if="this.popupSettings.body">{{ this.popupSettings.body }}</div>
-        <v-text-field
-          style="width: 400px"
-          persistent-hint
-          hint="Вы можете оставить комментарий перед тем как сменить стадию"
-          outlined
-          v-if="popupSettings.comment"
-          v-model="comment"
-          label="Комментарий"
-        ></v-text-field>
+
         <div class="pb-6 pt-8">
           <v-btn
             class="mt-4 mx-3"

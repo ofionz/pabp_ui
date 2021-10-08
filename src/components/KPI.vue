@@ -129,7 +129,7 @@ export default {
   },
   methods: {
     valiadate() {
-      this.$refs.comment.forEach((el) => el.validate(true));
+      this.$refs.comment?.forEach((el) => el.validate(true));
       let valiadationData = this.params.param.data.map((usr) => {
         return {
           name: usr.user_name,
