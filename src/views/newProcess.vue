@@ -29,19 +29,40 @@
         ></v-select>
       </div>
 
+      <div v-if="!Object.entries(typeData).length">
+        <div
+          v-for="(elem, index) in preFormData"
+          :key="index"
+          class="d-flex align-center"
+        >
+          <v-subheader v-if="elem.values.length > 1" style="width: 25%">
+            {{ elem.name }}</v-subheader
+          >
+          <v-select
+            v-if="elem.values.length > 1"
+            v-model="elem.selected"
+            :items="elem.values"
+            persistent-hint
+            item-value="id"
+            item-text="text"
+            :disabled="elem.disabled"
+            :multiple="elem.multiple"
+            @change="elem.multiple ? '' : onPreformChanged()"
+            @blur="elem.multiple ? onPreformChanged() : ''"
+            :hint="elem.description"
+          ></v-select>
+        </div>
+      </div>
+
       <div v-if="typeData.initiator" class="d-flex align-center">
         <v-subheader style="width: 25%"> Инициатор:</v-subheader>
         <span> {{ typeData.initiator.user_name }}</span>
       </div>
-      <!--      <initiator-->
-      <!--        @changed="onInitiatorChanged"-->
-      <!--        v-if="typeData.initiator"-->
-      <!--        :params="typeData.initiator"-->
-      <!--      ></initiator>-->
 
       <watcher v-if="typeData.watcher" :items="typeData.watcher"> </watcher>
 
       <k-p-i
+         :is-show-help="true"
         @blockSubmit="
           (elem) => {
             submitBlocked = elem.state;
@@ -71,7 +92,7 @@
         <v-btn
           color="primary"
           @click="startHandler"
-          :disabled="!typeData || !type"
+          :disabled="!Object.entries(typeData).length"
         >
           Запустить
         </v-btn>
@@ -102,6 +123,7 @@ export default {
       types: [],
       type: "",
       typeData: {},
+      preFormData: [],
     };
   },
   methods: {
@@ -136,11 +158,49 @@ export default {
     },
 
     async onTypeChanged(typeCode) {
+      this.$store.commit("processes/setNewProcessData", {});
       this.type = typeCode;
-      this.typeData = await this.$store.dispatch("processes/fetchFormData", {
-        processtype: this.type,
+      this.preFormData = await this.$store.dispatch(
+        "processes/fetchPreFormData",
+        {
+          processtype: this.type,
+        }
+      );
+      this.preFormData.forEach((elem) => {
+        if (elem.values.length === 1) {
+          elem.disabled = true;
+          elem.selected = elem.values[0].id;
+        }
       });
-      this.$store.commit("processes/setNewProcessData", this.typeData);
+
+      if (
+        this.preFormData.filter((el) => el.values.length <= 1).length ===
+        this.preFormData.length
+      ) {
+        await this.onPreformChanged();
+      }
+    },
+
+    async onPreformChanged() {
+      if (
+        this.preFormData.filter((elem) => {
+          if (Array.isArray(elem.selected)) {
+            return elem.selected.length > 0;
+          } else {
+            return !!elem.selected;
+          }
+        }).length === this.preFormData.length
+      ) {
+        this.typeData = await this.$store.dispatch("processes/fetchFormData", {
+          processtype: this.type,
+          preformdata: this.preFormData.map((el) => {
+            let res = {};
+            res[el.code] = el.selected;
+            return res;
+          }),
+        });
+        this.$store.commit("processes/setNewProcessData", this.typeData);
+      }
     },
 
     // async onInitiatorChanged(initiator) {

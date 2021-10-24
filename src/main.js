@@ -47,8 +47,14 @@ function createSetAuthInterceptor() {
     Vue.prototype.$globalVars.preloaderState = true;
     let user;
     if (window.location.href.indexOf("localhost") >= 0) {
-      user = 444;
-      config.url = "https://crm.azottech.starlabs.su" + config.url;
+      user = 415;
+      if (config.url === "/ajax222222222/?controller=bizapp&action=preformdata") {
+        config.url =
+          "https://3a7ecdf9-555c-45a6-95e2-26e1a282449c.mock.pstmn.io" +
+          config.url;
+      } else {
+        config.url = "https://crm.azottech.starlabs.su" + config.url;
+      }
       // eslint-disable-next-line no-undef
     } else if (BX.message("USER_ID")) {
       // eslint-disable-next-line no-undef

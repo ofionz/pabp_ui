@@ -101,16 +101,17 @@
           <v-card-title> Параметры</v-card-title>
 
           <div v-if="data.initiator" class="d-flex align-center">
-            <v-subheader style="width: 25%"> Инициатор:</v-subheader>
+            <v-subheader style="width: 30%"> Инициатор:</v-subheader>
             <span> {{ data.initiator.user_name }}</span>
           </div>
           <div v-if="data.watcher" class="d-flex align-center">
-            <v-subheader style="width: 25%"> Наблюдатели:</v-subheader>
+            <v-subheader style="width: 30%"> Наблюдатели:</v-subheader>
             <span v-for="(watcher, index) in data.watcher" :key="index">
               <span v-if="index !== 0">, </span>{{ watcher.user_name }}</span
             >
           </div>
           <k-p-i
+            :isShowHelp="data.buttons.length !== 0"
             @blockSubmit="
               (elem) => {
                 submitBlocked = elem.state;
@@ -258,6 +259,7 @@ export default {
       );
       this.$store.commit("processes/setNewProcessData", this.data);
     }
+
   },
 
   methods: {

@@ -52,7 +52,7 @@
         <div class="pt-8 pb-6">
           <b>{{ this.popupSettings.message }}</b>
         </div>
-        <div v-if="this.popupSettings.body">{{ this.popupSettings.body }}</div>
+        <div class="pa-4" v-if="this.popupSettings.body" v-html="this.popupSettings.body"></div>
 
         <div class="pb-6 pt-8">
           <v-btn

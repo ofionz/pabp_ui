@@ -57,6 +57,12 @@ export default {
     headers() {
       return [
         {
+          text: "ID",
+          align: "start",
+          sortable: true,
+          value: "id",
+        },
+        {
           text: "Тип процесса",
           align: "start",
           sortable: true,
